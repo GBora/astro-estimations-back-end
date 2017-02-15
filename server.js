@@ -2,39 +2,34 @@
 
 const Hapi = require('hapi');
 
-const dbOpts = {
-    "url": "mongodb://admin:administrator@ds056789.mlab.com:56789/astro-estimations",
-    "settings": {
-        "db": {
-            "native_parser": false
-        }
-    }
-};
+const dbOpts = require('./configs/db.settings.json');
 
 const server = new Hapi.Server();
 
-server.register({
-    register: require('hapi-mongodb'),
-    options: dbOpts
-},function() {
-    // Start the server
+let startHandler = () => {
     server.start((err) => {
-
         if (err) {
             throw err;
         }
         console.log('Server running at:', server.info.uri);
     });
-}, function (err) {
+}
+
+let errorHandler = (err) => {
     if (err) {
         console.error(err);
         throw err;
     }
-});
+}
+
+server.register({
+    register: require('hapi-mongodb'),
+    options: dbOpts
+}, startHandler, errorHandler);
 
 server.connection({ 
-    host: 'localhost', 
-    port: 8000,
+    host: '0.0.0.0', 
+    port: process.env.PORT,
     routes: {
         cors: true
     }

@@ -1,0 +1,8 @@
+{
+    "url": "mongodb://admin:administrator@ds056789.mlab.com:56789/astro-estimations",
+    "settings": {
+        "db": {
+            "native_parser": false
+        }
+    }
+}
