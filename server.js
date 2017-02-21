@@ -1,8 +1,11 @@
 'use strict';
 
 const Hapi = require('hapi');
-
 const dbOpts = require('./configs/db.settings.json');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('./package');
+const Inert = require('inert');
+const Vision = require('vision');
 
 const server = new Hapi.Server();
 
@@ -22,10 +25,20 @@ let errorHandler = (err) => {
     }
 }
 
-server.register({
+const options = {
+    info: {
+        'title': 'Astro-Estimations API Documentation',
+        'version': Pack.version,
+    }
+};
+
+server.register([Inert,Vision,{
     register: require('hapi-mongodb'),
     options: dbOpts
-}, startHandler, errorHandler);
+}, {
+    'register': HapiSwagger,
+    'options': options
+}], startHandler, errorHandler);
 
 server.connection({ 
     host: '0.0.0.0', 
